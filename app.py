@@ -28,12 +28,6 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
     }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #1f77b4;
-    }
     .insight-box {
         background-color: #e8f4f8;
         padding: 1.5rem;
@@ -77,14 +71,6 @@ ano_inicio, ano_fim = st.sidebar.select_slider(
 
 # Filtrar dados
 df_filtrado = df[(df['Ano'] >= ano_inicio) & (df['Ano'] <= ano_fim)]
-
-st.sidebar.markdown("---")
-st.sidebar.markdown("### 📊 Indicadores Disponíveis")
-indicadores = st.sidebar.multiselect(
-    "Selecione os indicadores:",
-    ['MVI', 'Homicídios CVLI', 'Latrocínio', 'Roubo de Veículos'],
-    default=['MVI', 'Homicídios CVLI', 'Roubo de Veículos']
-)
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### ℹ️ Sobre")
@@ -193,180 +179,297 @@ st.markdown("""
 
 st.markdown("---")
 
-# Gráficos
-st.markdown("## 📊 Análise Temporal dos Indicadores")
+# GRÁFICO 1: MVI - Evolução Temporal
+st.markdown("## 📊 1. Mortes Violentas Intencionais (MVI)")
+st.markdown("### Queda de 48,5% em 8 anos")
 
-# Gráfico 1: Evolução das Taxas por 100 mil habitantes
-st.markdown("### Evolução das Taxas por 100 mil Habitantes")
+col1, col2 = st.columns(2)
 
-fig1 = go.Figure()
-
-if 'MVI' in indicadores:
-    fig1.add_trace(go.Scatter(
-        x=df_filtrado['Ano'],
-        y=df_filtrado['Taxa_MVI_100k'],
-        mode='lines+markers',
-        name='Taxa MVI',
-        line=dict(color='#1f77b4', width=3),
-        marker=dict(size=8)
-    ))
-
-if 'Homicídios CVLI' in indicadores and df_filtrado['Taxa_CVLI_100k'].notna().any():
-    fig1.add_trace(go.Scatter(
-        x=df_filtrado['Ano'],
-        y=df_filtrado['Taxa_CVLI_100k'],
-        mode='lines+markers',
-        name='Taxa Homicídios CVLI',
-        line=dict(color='#ff7f0e', width=3),
-        marker=dict(size=8)
-    ))
-
-if 'Latrocínio' in indicadores and df_filtrado['Taxa_Latrocinio_100k'].notna().any():
-    fig1.add_trace(go.Scatter(
-        x=df_filtrado['Ano'],
-        y=df_filtrado['Taxa_Latrocinio_100k'],
-        mode='lines+markers',
-        name='Taxa Latrocínio',
-        line=dict(color='#d62728', width=3),
-        marker=dict(size=8)
-    ))
-
-if 'Roubo de Veículos' in indicadores and df_filtrado['Taxa_Roubo_Veiculo_100k'].notna().any():
-    fig1.add_trace(go.Scatter(
-        x=df_filtrado['Ano'],
-        y=df_filtrado['Taxa_Roubo_Veiculo_100k'],
-        mode='lines+markers',
-        name='Taxa Roubo de Veículos',
-        line=dict(color='#2ca02c', width=3),
-        marker=dict(size=8)
-    ))
-
-fig1.update_layout(
-    xaxis_title="Ano",
-    yaxis_title="Taxa por 100 mil habitantes",
-    hovermode='x unified',
-    height=500,
-    template='plotly_white',
-    legend=dict(
-        orientation="h",
-        yanchor="bottom",
-        y=1.02,
-        xanchor="right",
-        x=1
-    )
-)
-
-st.plotly_chart(fig1, use_container_width=True)
-
-# Gráfico 2: Números Absolutos
-st.markdown("### Evolução dos Números Absolutos de Casos")
-
-fig2 = go.Figure()
-
-if 'MVI' in indicadores:
-    fig2.add_trace(go.Bar(
+with col1:
+    # Gráfico de linha com área
+    fig_mvi_linha = go.Figure()
+    fig_mvi_linha.add_trace(go.Scatter(
         x=df_filtrado['Ano'],
         y=df_filtrado['MVI_Casos'],
-        name='MVI',
-        marker_color='#1f77b4'
+        mode='lines+markers',
+        name='Casos de MVI',
+        line=dict(color='#d62728', width=4),
+        marker=dict(size=12, symbol='circle'),
+        fill='tozeroy',
+        fillcolor='rgba(214, 39, 40, 0.2)'
     ))
-
-if 'Homicídios CVLI' in indicadores and df_filtrado['Homicidios_CVLI_Casos'].notna().any():
-    fig2.add_trace(go.Bar(
-        x=df_filtrado['Ano'],
-        y=df_filtrado['Homicidios_CVLI_Casos'],
-        name='Homicídios CVLI',
-        marker_color='#ff7f0e'
-    ))
-
-if 'Roubo de Veículos' in indicadores and df_filtrado['Roubo_Veiculo_Casos'].notna().any():
-    fig2.add_trace(go.Bar(
-        x=df_filtrado['Ano'],
-        y=df_filtrado['Roubo_Veiculo_Casos'],
-        name='Roubo de Veículos',
-        marker_color='#2ca02c'
-    ))
-
-fig2.update_layout(
-    xaxis_title="Ano",
-    yaxis_title="Número de Casos",
-    hovermode='x unified',
-    height=500,
-    template='plotly_white',
-    barmode='group',
-    legend=dict(
-        orientation="h",
-        yanchor="bottom",
-        y=1.02,
-        xanchor="right",
-        x=1
+    
+    fig_mvi_linha.update_layout(
+        title="Evolução dos Casos Absolutos",
+        xaxis_title="Ano",
+        yaxis_title="Número de Casos",
+        height=400,
+        template='plotly_white',
+        hovermode='x unified'
     )
+    st.plotly_chart(fig_mvi_linha, use_container_width=True)
+
+with col2:
+    # Gráfico de barras com taxa
+    fig_mvi_taxa = go.Figure()
+    fig_mvi_taxa.add_trace(go.Bar(
+        x=df_filtrado['Ano'],
+        y=df_filtrado['Taxa_MVI_100k'],
+        marker_color='#d62728',
+        text=df_filtrado['Taxa_MVI_100k'].round(1),
+        textposition='outside'
+    ))
+    
+    fig_mvi_taxa.update_layout(
+        title="Taxa por 100 mil Habitantes",
+        xaxis_title="Ano",
+        yaxis_title="Taxa por 100k hab.",
+        height=400,
+        template='plotly_white',
+        showlegend=False
+    )
+    st.plotly_chart(fig_mvi_taxa, use_container_width=True)
+
+st.markdown("---")
+
+# GRÁFICO 2: Homicídios CVLI
+if df_filtrado['Homicidios_CVLI_Casos'].notna().any():
+    st.markdown("## 🔴 2. Homicídios Dolosos (CVLI)")
+    st.markdown("### Redução de 49,6% desde 2020")
+    
+    df_cvli = df_filtrado[df_filtrado['Homicidios_CVLI_Casos'].notna()].copy()
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        # Gráfico de área
+        fig_cvli = go.Figure()
+        fig_cvli.add_trace(go.Scatter(
+            x=df_cvli['Ano'],
+            y=df_cvli['Homicidios_CVLI_Casos'],
+            mode='lines+markers',
+            name='Homicídios CVLI',
+            line=dict(color='#ff7f0e', width=4),
+            marker=dict(size=12),
+            fill='tozeroy',
+            fillcolor='rgba(255, 127, 14, 0.2)'
+        ))
+        
+        fig_cvli.update_layout(
+            title="Evolução dos Casos Absolutos",
+            xaxis_title="Ano",
+            yaxis_title="Número de Casos",
+            height=400,
+            template='plotly_white'
+        )
+        st.plotly_chart(fig_cvli, use_container_width=True)
+    
+    with col2:
+        # Gráfico de barras com taxa
+        fig_cvli_taxa = go.Figure()
+        fig_cvli_taxa.add_trace(go.Bar(
+            x=df_cvli['Ano'],
+            y=df_cvli['Taxa_CVLI_100k'],
+            marker_color='#ff7f0e',
+            text=df_cvli['Taxa_CVLI_100k'].round(1),
+            textposition='outside'
+        ))
+        
+        fig_cvli_taxa.update_layout(
+            title="Taxa por 100 mil Habitantes",
+            xaxis_title="Ano",
+            yaxis_title="Taxa por 100k hab.",
+            height=400,
+            template='plotly_white',
+            showlegend=False
+        )
+        st.plotly_chart(fig_cvli_taxa, use_container_width=True)
+    
+    st.markdown("---")
+
+# GRÁFICO 3: Roubo de Veículos - DESTAQUE
+if df_filtrado['Roubo_Veiculo_Casos'].notna().any():
+    st.markdown("## 🚗 3. Roubo de Veículos")
+    st.markdown("### 🎯 Redução Espetacular de 93%")
+    
+    df_rv = df_filtrado[df_filtrado['Roubo_Veiculo_Casos'].notna()].copy()
+    
+    # Gráfico grande destacando a queda
+    fig_rv = go.Figure()
+    
+    # Adicionar barras com cores degradê
+    cores = ['#2ca02c' if i == 0 else '#90EE90' for i in range(len(df_rv))]
+    
+    fig_rv.add_trace(go.Bar(
+        x=df_rv['Ano'],
+        y=df_rv['Roubo_Veiculo_Casos'],
+        marker_color=cores,
+        text=df_rv['Roubo_Veiculo_Casos'].astype(int),
+        textposition='outside',
+        textfont=dict(size=14, color='black')
+    ))
+    
+    # Adicionar anotação destacando a queda
+    fig_rv.add_annotation(
+        x=df_rv['Ano'].iloc[0],
+        y=df_rv['Roubo_Veiculo_Casos'].iloc[0],
+        text=f"<b>2018: {int(df_rv['Roubo_Veiculo_Casos'].iloc[0]):,} casos</b><br>28 veículos/dia",
+        showarrow=True,
+        arrowhead=2,
+        arrowsize=1,
+        arrowwidth=2,
+        arrowcolor="#2ca02c",
+        ax=-80,
+        ay=-80,
+        font=dict(size=12, color="#2ca02c")
+    )
+    
+    fig_rv.add_annotation(
+        x=df_rv['Ano'].iloc[-1],
+        y=df_rv['Roubo_Veiculo_Casos'].iloc[-1],
+        text=f"<b>2024: {int(df_rv['Roubo_Veiculo_Casos'].iloc[-1]):,} casos</b><br>2 veículos/dia",
+        showarrow=True,
+        arrowhead=2,
+        arrowsize=1,
+        arrowwidth=2,
+        arrowcolor="#2ca02c",
+        ax=80,
+        ay=-80,
+        font=dict(size=12, color="#2ca02c")
+    )
+    
+    fig_rv.update_layout(
+        title="Evolução do Roubo de Veículos: De 28 para 2 veículos roubados por dia",
+        xaxis_title="Ano",
+        yaxis_title="Número de Casos",
+        height=500,
+        template='plotly_white',
+        showlegend=False
+    )
+    
+    st.plotly_chart(fig_rv, use_container_width=True)
+    
+    st.markdown("---")
+
+# GRÁFICO 4: Latrocínio - ALERTA
+if df_filtrado['Latrocinio_Casos'].notna().any():
+    st.markdown("## ⚠️ 4. Latrocínio (Roubo seguido de Morte)")
+    st.markdown("### Único indicador com aumento em 2024")
+    
+    df_lat = df_filtrado[df_filtrado['Latrocinio_Casos'].notna()].copy()
+    
+    # Criar cores: verde para queda, vermelho para aumento
+    cores_lat = []
+    for i in range(len(df_lat)):
+        if i == 0:
+            cores_lat.append('#2ca02c')
+        else:
+            if df_lat['Latrocinio_Casos'].iloc[i] < df_lat['Latrocinio_Casos'].iloc[i-1]:
+                cores_lat.append('#2ca02c')  # Verde para queda
+            else:
+                cores_lat.append('#d62728')  # Vermelho para aumento
+    
+    fig_lat = go.Figure()
+    fig_lat.add_trace(go.Bar(
+        x=df_lat['Ano'],
+        y=df_lat['Latrocinio_Casos'],
+        marker_color=cores_lat,
+        text=df_lat['Latrocinio_Casos'].astype(int),
+        textposition='outside',
+        textfont=dict(size=14)
+    ))
+    
+    # Destacar o aumento em 2024
+    fig_lat.add_annotation(
+        x=df_lat['Ano'].iloc[-1],
+        y=df_lat['Latrocinio_Casos'].iloc[-1],
+        text="<b>⚠️ Aumento de 21,4%</b><br>Requer atenção!",
+        showarrow=True,
+        arrowhead=2,
+        arrowsize=1,
+        arrowwidth=2,
+        arrowcolor="#d62728",
+        ax=60,
+        ay=-60,
+        font=dict(size=12, color="#d62728")
+    )
+    
+    fig_lat.update_layout(
+        title="Evolução do Latrocínio: Tendência de queda interrompida em 2024",
+        xaxis_title="Ano",
+        yaxis_title="Número de Casos",
+        height=450,
+        template='plotly_white',
+        showlegend=False
+    )
+    
+    st.plotly_chart(fig_lat, use_container_width=True)
+    
+    st.markdown("---")
+
+# GRÁFICO 5: Comparação Geral - Redução Percentual
+st.markdown("## 📉 5. Visão Geral: Redução da Criminalidade")
+
+# Calcular reduções totais
+reducao_mvi = ((df_filtrado['MVI_Casos'].iloc[-1] - df_filtrado['MVI_Casos'].iloc[0]) / df_filtrado['MVI_Casos'].iloc[0]) * 100
+
+reducoes = {
+    'Indicador': [],
+    'Redução (%)': [],
+    'Cor': []
+}
+
+reducoes['Indicador'].append('MVI')
+reducoes['Redução (%)'].append(reducao_mvi)
+reducoes['Cor'].append('#d62728')
+
+if df_filtrado['Homicidios_CVLI_Casos'].notna().any():
+    df_cvli_temp = df_filtrado[df_filtrado['Homicidios_CVLI_Casos'].notna()]
+    reducao_cvli = ((df_cvli_temp['Homicidios_CVLI_Casos'].iloc[-1] - df_cvli_temp['Homicidios_CVLI_Casos'].iloc[0]) / df_cvli_temp['Homicidios_CVLI_Casos'].iloc[0]) * 100
+    reducoes['Indicador'].append('Homicídios CVLI')
+    reducoes['Redução (%)'].append(reducao_cvli)
+    reducoes['Cor'].append('#ff7f0e')
+
+if df_filtrado['Roubo_Veiculo_Casos'].notna().any():
+    df_rv_temp = df_filtrado[df_filtrado['Roubo_Veiculo_Casos'].notna()]
+    reducao_rv = ((df_rv_temp['Roubo_Veiculo_Casos'].iloc[-1] - df_rv_temp['Roubo_Veiculo_Casos'].iloc[0]) / df_rv_temp['Roubo_Veiculo_Casos'].iloc[0]) * 100
+    reducoes['Indicador'].append('Roubo de Veículos')
+    reducoes['Redução (%)'].append(reducao_rv)
+    reducoes['Cor'].append('#2ca02c')
+
+if df_filtrado['Latrocinio_Casos'].notna().any():
+    df_lat_temp = df_filtrado[df_filtrado['Latrocinio_Casos'].notna()]
+    reducao_lat = ((df_lat_temp['Latrocinio_Casos'].iloc[-1] - df_lat_temp['Latrocinio_Casos'].iloc[0]) / df_lat_temp['Latrocinio_Casos'].iloc[0]) * 100
+    reducoes['Indicador'].append('Latrocínio')
+    reducoes['Redução (%)'].append(reducao_lat)
+    # Cor vermelha se aumentou, verde se diminuiu
+    reducoes['Cor'].append('#d62728' if reducao_lat > 0 else '#2ca02c')
+
+df_reducoes = pd.DataFrame(reducoes)
+
+fig_reducoes = go.Figure()
+fig_reducoes.add_trace(go.Bar(
+    y=df_reducoes['Indicador'],
+    x=df_reducoes['Redução (%)'],
+    orientation='h',
+    marker_color=df_reducoes['Cor'],
+    text=df_reducoes['Redução (%)'].round(1).astype(str) + '%',
+    textposition='outside',
+    textfont=dict(size=14, color='black')
+))
+
+fig_reducoes.add_vline(x=0, line_dash="dash", line_color="gray", line_width=2)
+
+fig_reducoes.update_layout(
+    title=f"Variação Percentual dos Indicadores ({ano_inicio}-{ano_fim})",
+    xaxis_title="Variação Percentual (%)",
+    yaxis_title="",
+    height=400,
+    template='plotly_white',
+    showlegend=False
 )
 
-st.plotly_chart(fig2, use_container_width=True)
-
-# Gráfico 3: Variação Percentual Anual
-st.markdown("### Variação Percentual Anual")
-
-df_variacao = df_filtrado.copy()
-df_variacao['Var_MVI'] = df_variacao['MVI_Casos'].pct_change() * 100
-df_variacao['Var_CVLI'] = df_variacao['Homicidios_CVLI_Casos'].pct_change() * 100
-df_variacao['Var_Latrocinio'] = df_variacao['Latrocinio_Casos'].pct_change() * 100
-df_variacao['Var_Roubo_Veiculo'] = df_variacao['Roubo_Veiculo_Casos'].pct_change() * 100
-
-fig3 = go.Figure()
-
-if 'MVI' in indicadores:
-    fig3.add_trace(go.Bar(
-        x=df_variacao['Ano'],
-        y=df_variacao['Var_MVI'],
-        name='MVI',
-        marker_color='#1f77b4'
-    ))
-
-if 'Homicídios CVLI' in indicadores:
-    fig3.add_trace(go.Bar(
-        x=df_variacao['Ano'],
-        y=df_variacao['Var_CVLI'],
-        name='Homicídios CVLI',
-        marker_color='#ff7f0e'
-    ))
-
-if 'Latrocínio' in indicadores:
-    fig3.add_trace(go.Bar(
-        x=df_variacao['Ano'],
-        y=df_variacao['Var_Latrocinio'],
-        name='Latrocínio',
-        marker_color='#d62728'
-    ))
-
-if 'Roubo de Veículos' in indicadores:
-    fig3.add_trace(go.Bar(
-        x=df_variacao['Ano'],
-        y=df_variacao['Var_Roubo_Veiculo'],
-        name='Roubo de Veículos',
-        marker_color='#2ca02c'
-    ))
-
-fig3.add_hline(y=0, line_dash="dash", line_color="gray")
-
-fig3.update_layout(
-    xaxis_title="Ano",
-    yaxis_title="Variação Percentual (%)",
-    hovermode='x unified',
-    height=500,
-    template='plotly_white',
-    barmode='group',
-    legend=dict(
-        orientation="h",
-        yanchor="bottom",
-        y=1.02,
-        xanchor="right",
-        x=1
-    )
-)
-
-st.plotly_chart(fig3, use_container_width=True)
+st.plotly_chart(fig_reducoes, use_container_width=True)
 
 st.markdown("---")
 
@@ -393,51 +496,24 @@ with st.expander("🔍 Clique para ver detalhes sobre metodologia e fontes"):
     - **Fonte:** Anuário Brasileiro de Segurança Pública 2025 (FBSP)
     - **URL:** [https://forumseguranca.org.br](https://forumseguranca.org.br)
     - **Cobertura:** 2017-2024 (série completa)
-    - **Definição:** Inclui Homicídio Doloso, Latrocínio, Lesão Corporal Seguida de Morte e Mortes Decorrentes de Intervenção Policial
     
-    #### 2. População Estimada
-    - **Fonte:** IBGE (via Anuário FBSP)
-    - **Cobertura:** 2017-2024 (série completa)
-    - **Referência:** 1º de julho de cada ano
-    
-    #### 3. Homicídios Dolosos/CVLI
+    #### 2. Homicídios Dolosos/CVLI
     - **Fonte:** SSP-GO via Instituto Mauro Borges (IMB)
-    - **Documento:** "Goiás em Dados 2024"
     - **Cobertura:** 2020-2024
-    - **Definição:** Crimes Violentos Letais Intencionais (exclui MDIP)
     
-    #### 4. Latrocínio
+    #### 3. Latrocínio
     - **Fonte:** SSP-GO via IMB
     - **Cobertura:** 2021-2024
-    - **Definição:** Roubo seguido de morte
     
-    #### 5. Roubo de Veículos
+    #### 4. Roubo de Veículos
     - **Fonte:** SSP-GO
     - **Cobertura:** 2018, 2021-2024
     
-    ### Lacunas Conhecidas
-    
-    - **Homicídios CVLI:** Dados não disponíveis para 2017-2019
-    - **Latrocínio:** Dados não disponíveis para 2017-2020
-    - **Roubo de Veículos:** Dados não disponíveis para 2017, 2019-2020
-    
     ### Notas Metodológicas
     
-    1. **MVI vs CVLI:** MVI inclui mortes por intervenção policial, CVLI não inclui
-    2. **Censo 2022:** Ajuste populacional pode afetar comparações entre 2022-2023
-    3. **Taxas:** Calculadas por 100 mil habitantes usando população estimada do IBGE
-    4. **Investimentos:** R$ 17 bilhões investidos em segurança pública (2019-2024)
-    
-    ### Contexto das Políticas Públicas
-    
-    A partir de 2019, o Governo de Goiás implementou uma série de reformas na segurança pública:
-    - Integração das forças policiais
-    - Aprimoramento dos batalhões
-    - Formação de pessoal na área de inteligência
-    - Investimento em infraestrutura, armamentos e tecnologia
-    - Reajuste salarial para agentes de segurança
-    
-    Esses investimentos e reformas resultaram em quedas consistentes e significativas em todos os principais indicadores criminais.
+    - **Taxas:** Calculadas por 100 mil habitantes usando população estimada do IBGE
+    - **MVI vs CVLI:** MVI inclui mortes por intervenção policial, CVLI não inclui
+    - **Censo 2022:** Ajuste populacional pode afetar comparações entre 2022-2023
     """)
 
 st.markdown("---")
