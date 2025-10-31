@@ -1,0 +1,60 @@
+
+METADADOS DO DATASET - SEGURANÇA PÚBLICA EM GOIÁS (2017-2024)
+
+FONTES DE DADOS:
+================
+
+1. MVI (Mortes Violentas Intencionais):
+   - Fonte: Anuário Brasileiro de Segurança Pública 2025 (FBSP)
+   - URL: https://forumseguranca.org.br/wp-content/uploads/2025/07/anuario-2025-dados.xlsx
+   - Cobertura: 2017-2024 (série completa)
+   - Definição: Inclui Homicídio Doloso, Latrocínio, Lesão Corporal Seguida de Morte e 
+     Mortes Decorrentes de Intervenção Policial
+
+2. População Estimada:
+   - Fonte: IBGE (via Anuário FBSP)
+   - Cobertura: 2017-2024 (série completa)
+   - Referência: 1º de julho de cada ano
+
+3. Homicídios Dolosos/CVLI:
+   - Fonte: SSP-GO via Instituto Mauro Borges (IMB)
+   - Documento: "Goiás em Dados 2024"
+   - Cobertura: 2020-2024
+   - Definição: Crimes Violentos Letais Intencionais (exclui MDIP)
+
+4. Latrocínio:
+   - Fonte: SSP-GO via IMB
+   - Cobertura: 2021-2024
+   - Definição: Roubo seguido de morte
+
+5. Roubo de Veículos:
+   - Fonte: SSP-GO
+   - URL: https://agenciacoradenoticias.go.gov.br/144342-goias-registra-reducao-de-93-no-roubo-a-veiculos-em-seis-anos
+   - Cobertura: 2018, 2021-2024
+   - Dados de 2018: 10.104 casos
+   - Dados de 2021-2024: Relatórios técnicos IMB
+
+LACUNAS CONHECIDAS:
+==================
+
+- Homicídios CVLI: Dados não disponíveis para 2017-2019
+- Latrocínio: Dados não disponíveis para 2017-2020
+- Roubo de Veículos: Dados não disponíveis para 2017, 2019-2020
+
+METODOLOGIA:
+============
+
+- Taxas calculadas por 100 mil habitantes usando população estimada do IBGE
+- Dados priorizados de fontes oficiais estaduais quando disponíveis
+- MVI utilizado como proxy para violência letal quando CVLI não disponível
+- Revisão populacional do Censo 2022 afeta comparações entre 2022-2023
+
+NOTAS IMPORTANTES:
+==================
+
+1. MVI vs CVLI: MVI inclui mortes por intervenção policial, CVLI não inclui
+2. Censo 2022: Ajuste populacional pode afetar taxas de 2022-2023
+3. Redução expressiva: Todos os indicadores mostram queda significativa no período
+4. Investimentos: R$ 17 bilhões investidos em segurança pública (2019-2024)
+
+DATA DE COMPILAÇÃO: 31 de outubro de 2025
